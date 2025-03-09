@@ -1,38 +1,39 @@
 import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
 
-# Load the CSV file into a DataFrame
-csv_path = "./csv/filtered_runners.csv"
-df = pd.read_csv(csv_path)
-columns_to_print = ['Name', 'Pos', 'FinishTime','Time_Difference']
-# Convert the FinishTime column to timedelta
-df['FinishTime'] = pd.to_timedelta(df['FinishTime'], errors='coerce')
+csv = "./csv/savefile.csv"
 
-# Set your finish time as a timedelta
-my_finish_time = pd.to_timedelta("01:45:30.00")
+# Read the CSV file into a DataFrame
+df = pd.read_csv(csv)
 
-# Calculate the time difference relative to your finish time
-df['TimeDifference'] = df['FinishTime'] - my_finish_time
+# Select columns for graphing
+graphCols = ["Date", "Pace"]
 
-# Drop rows with invalid or NaT FinishTime
-df_filtered = df.dropna(subset=['FinishTime'])
+# Convert 'Date' to pandas datetime (with inferred format)
+df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
 
-# Filter for runners who finished before you (negative TimeDifference)
-df_before_you = df_filtered[df_filtered['TimeDifference'] < pd.Timedelta(0)]
+# Convert 'Date' to numeric (e.g., days since the first date)
+df['Date_numeric'] = (df['Date'] - df['Date'].min())  / pd.Timedelta(days=1)
 
-# Calculate the absolute time difference (to find the closest finishers)
-df_before_you['AbsTimeDifference'] = df_before_you['TimeDifference'].abs()
+# Prepare the data for linear regression
+X = df['Date_numeric'].values.reshape(-1, 1)  # Features (dates)
+y = df['Pace'].values  # Target (pace)
 
-# Sort by absolute time difference (closest to your finish time)
-sorted_df = df_before_you.sort_values(by='AbsTimeDifference')
+# Apply linear regression
+model = LinearRegression()
+model.fit(X, y)
 
-# Function to format timedelta without days
-def format_timedelta(td):
-    return str(td).split(" ")[-1]  # Get only the time part (ignoring the days)
+# Make predictions using the linear regression model
+y_pred = model.predict(X)
 
-# Apply the formatting to the relevant columns
-sorted_df['FinishTime'] = sorted_df['FinishTime'].apply(format_timedelta)
-sorted_df['Time_Difference'] = sorted_df['AbsTimeDifference'].apply(format_timedelta)
+# Plotting
+plt.scatter(df['Date'], df['Pace'], color='blue', label='Data Points')  # Scatter plot
+plt.plot(df['Date'], y_pred, color='red', label='Prediction Line')  # Regression line
 
-# Print the results
-print("Top 5 runners who finished before you, closest to your finish time:")
-print(sorted_df[columns_to_print].head(5).to_string(index=False))
+plt.title("Pace Through the Days")
+plt.xlabel("Date")
+plt.ylabel("Pace")
+plt.legend()
+
+plt.show()
