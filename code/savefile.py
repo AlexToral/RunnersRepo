@@ -12,11 +12,14 @@ class Save():
         else:
             return float(pace)
     
-    def setDate(self,date):
+    def setDate(self, date):
         PandasDate = pd.Timestamp(date)
 
-        formatted_Date = PandasDate.strftime("%Y-%d-%m")
-        return formatted_Date
+        # Formato con horas y minutos
+        formatted_Date = PandasDate.strftime("%Y-%d-%m %H:%M")
+
+        return formatted_Date  # Devuelve la fecha formateada con horas y minutos
+
     
     def setDistance(self,distance):
         if isinstance(distance,int):

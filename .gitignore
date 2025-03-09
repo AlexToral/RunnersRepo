@@ -1,2 +1,5 @@
 .venv
 csv/savefile.csv
+code/__pycache__
+code/GUI/__pycache__
+code/test.py
