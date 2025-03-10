@@ -93,7 +93,7 @@ class App(CTk):
         self.PacePR = CTkLabel(master=self.PaceFrame, text=f"NA", width=200, height=200, font=CTkFont(family="@Microsoft YaHei Light", size=65))
         self.PacePR.pack(padx=(123, 0))
 
-        self.EventFrame = CTkFrame(master=self, fg_color=("gray90", "#14142b"))
+        self.EventFrame = CTkFrame(master=self.FramePR, fg_color=("gray90", "#14142b"))
         self.EventFrame.pack_propagate(False)
         self.EventFrame.pack(fill="x")
 
@@ -103,7 +103,7 @@ class App(CTk):
         self.event_name = CTkLabel(master=self.EventFrame, text="Half Marathon", font=CTkFont(size=15, weight="normal"))
         self.event_name.pack()
         
-        self.DAYS = CTkLabel(master=self.EventFrame, text="70 Days", font=CTkFont(size=45, weight="normal"))
+        self.DAYS = CTkLabel(master=self.EventFrame, text="70 Days", font=CTkFont(size=35, weight="normal"),width=300)
         self.DAYS.pack()
 
         self.event_date = datetime(2025,5,18,6,00,00)
