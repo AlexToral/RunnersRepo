@@ -6,6 +6,15 @@ from tableclass import Table
 
 class App(CTk):
 
+    def refetch_data(self):
+    
+        # Refetch or update any data you need here
+        self.update_event_countdown()
+        self.minPace()
+        self.maxDistance()
+        
+        self.after(1000, self.refetch_data)
+
     def open_save_window(self):
         self.save_window = SaveGui(self)
 
@@ -23,10 +32,12 @@ class App(CTk):
         self.table.graphDateandDistance()
 
     def minPace(self):
-        return self.table.minPace()
+        min =  self.table.minPace()
+        self.PacePR.configure(text=min)
 
     def maxDistance(self):
-        return self.table.maxDistance()
+        max =  self.table.maxDistance()
+        self.DistancePR.configure(text=max)
         
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -51,14 +62,14 @@ class App(CTk):
         self.DistanceFrame.pack(side="left")
         self.DistancePRTitle = CTkLabel(master=self.DistanceFrame, text="Distance PR:", fg_color="transparent", width=200, corner_radius=0, padx=34, justify="left", compound="left", anchor="center", height=10, font=CTkFont(size=30, weight="normal"))
         self.DistancePRTitle.pack(padx=(0, 81))
-        self.DistancePR = CTkLabel(master=self.DistanceFrame, text=f"{self.maxDistance()}", width=250, height=200, compound="left", justify="left", padx=0, font=CTkFont(family="@Microsoft YaHei Light", size=65))
+        self.DistancePR = CTkLabel(master=self.DistanceFrame, text=f"NA", width=250, height=200, compound="left", justify="left", padx=0, font=CTkFont(family="@Microsoft YaHei Light", size=65))
         self.DistancePR.pack(padx=(0, 78))
         self.PaceFrame = CTkFrame(master=self.FramePR, width=250, corner_radius=0, bg_color=("gray90", "#14142b"), fg_color=("gray85", "#14142b"))
         self.PaceFrame.pack_propagate(False)
         self.PaceFrame.pack(side="right")
         self.PacePRtitle = CTkLabel(master=self.PaceFrame, text="Pace PR:", font=CTkFont(size=45, weight="normal"))
         self.PacePRtitle.pack(padx=(40, 0))
-        self.PacePR = CTkLabel(master=self.PaceFrame, text=f"{self.minPace()}", width=200, height=200, font=CTkFont(family="@Microsoft YaHei Light", size=65))
+        self.PacePR = CTkLabel(master=self.PaceFrame, text=f"NA", width=200, height=200, font=CTkFont(family="@Microsoft YaHei Light", size=65))
         self.PacePR.pack(padx=(123, 0))
         self.EventFrame = CTkFrame(master=self, fg_color=("gray90", "#14142b"))
         self.EventFrame.pack_propagate(False)
@@ -71,5 +82,6 @@ class App(CTk):
         self.DAYS.pack()
         self.event_date = datetime(2025,5,18,6,0)
         self.update_event_countdown()
+        self.refetch_data()
         
         

@@ -1,22 +1,49 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
+import os
+import time
+import threading
 
 
 class Table():
+
+    def update_df_if_needed(self):
+        """Check if the CSV file has been modified, and reload it if necessary."""
+        current_modified = os.path.getmtime(self.csv)
+        if current_modified != self.last_modified:  # If the file has changed
+            self.df = pd.read_csv(self.csv)  # Reload the DataFrame
+            self.last_modified = current_modified  # Update the last modified time
+            print("CSV file updated!")
+
+    def start_periodic_update(self, interval=5):
+        """Start the periodic update check every `interval` seconds using threading."""
+        def update_loop():
+            while True:
+                self.update_df_if_needed()  # Check and update the DataFrame
+                time.sleep(interval)  # Wait for the specified interval
+        
+        # Start the update loop in a new thread
+        threading.Thread(target=update_loop, daemon=True).start()
+
     def __init__(self):
         self.csv = "./csv/savefile.csv"
         self.df = pd.read_csv(self.csv)
+        self.last_modified = os.path.getmtime(self.csv)
     
     def minPace(self):
+        self.start_periodic_update()
         minpace = min(self.df["Pace"])
         return minpace
     
     def maxDistance(self):
+        self.start_periodic_update()
         maxDistance = max(self.df["Distance"])
         return maxDistance
 
     def graphDateandPace(self):
+        self.start_periodic_update()
+
         # Convertir 'Date' a tipo datetime
         self.df['Date'] = pd.to_datetime(self.df['Date'], errors='coerce')
 
@@ -48,6 +75,7 @@ class Table():
         plt.show()
 
     def graphDateandDistance(self):
+        self.start_periodic_update()
          # Convertir 'Date' a tipo datetime
         self.df['Date'] = pd.to_datetime(self.df['Date'], errors='coerce')
 
