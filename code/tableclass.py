@@ -28,18 +28,29 @@ class Table():
 
     def __init__(self):
         self.csv = "./csv/savefile.csv"
+        #if the file is not found, create it
+        if not os.path.exists(self.csv):
+            self.df = pd.DataFrame(columns=["Pace","Date","Distance","Time"])
+            self.df.to_csv(self.csv, index=False)   
+
         self.df = pd.read_csv(self.csv)
         self.last_modified = os.path.getmtime(self.csv)
     
     def minPace(self):
         self.start_periodic_update()
-        minpace = min(self.df["Pace"])
-        return minpace
+        try:
+            minpace = min(self.df["Pace"])
+            return minpace
+        except:
+            return "No data"
     
     def maxDistance(self):
         self.start_periodic_update()
-        maxDistance = max(self.df["Distance"])
-        return maxDistance
+        try:
+            maxDistance = max(self.df["Distance"])
+            return maxDistance
+        except:
+            return "No data"
 
     def graphDateandPace(self):
         self.start_periodic_update()
